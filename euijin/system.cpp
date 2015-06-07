@@ -89,9 +89,11 @@ int main()
           }
           else if (*it1 == *it2)
           {
+            temp.push_back(*it1);
+            if (Hist[*it1].from == ID2)
+              Hist[*it1].from = ID1;
+            else Hist[*it1].to = ID1;
             it1++; it2++;
-//            Hist.erase(Hist.begin() + *it1); //지우는데 들어가는 시간?
-            //지우고 나면 다른 인덱스 하나씩 당겨야한다!!
           }
           else
           {
@@ -117,6 +119,8 @@ int main()
         }
 
         id1_pos->second.log_idx = temp;
+
+        id1_pos->second.balance += id2_pos->second.balance;
         T.erase(ID2);
       }
     }
