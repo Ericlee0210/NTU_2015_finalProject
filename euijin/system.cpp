@@ -133,7 +133,20 @@ int main()
       T[logedinID].balance += money;
       std::cout << "success, " << T[logedinID].balance << " dollars in current account\n";
     }
-    
+
+    else if (op == "withdraw")
+    {
+      input >> num;
+      money = std::stoi(num);
+      if (T[logedinID].balance < money)
+        std::cout << "fail, " << T[logedinID].balance << " dollars only in current account\n";
+      else
+      {
+        T[logedinID].balance -= money;
+        std::cout << "success, " << T[logedinID].balance << " dollars left in current account\n";
+      }
+    }
+
 
   }
 
