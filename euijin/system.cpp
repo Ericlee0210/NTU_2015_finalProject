@@ -17,6 +17,20 @@ int main()
     std::istringstream input(row);
     input >> op;
 
+    if (op == "create")
+    {
+      input >> ID1 >> PW1;
+      if (T.find(ID1) == T.end()) // 아무것도 없을 때도 성립?
+      {
+        Info temp;
+        temp.password = PW1;
+        temp.balance = 0;
+        T[ID1] = temp;
+      }
+      else
+        std::cout << "ID " << ID1 << " exists, ";
+    }
+
   }
 
   return 0;
