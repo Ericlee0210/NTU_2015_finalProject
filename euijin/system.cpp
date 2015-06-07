@@ -8,7 +8,8 @@ int main()
   std::string op;
   std::string ID1, ID2;
   std::string PW1, PW2;
-  int a;
+  std::string num;
+  int money;
   std::string logedinID = "";
   AccountT T;
   History Hist;
@@ -124,6 +125,16 @@ int main()
         T.erase(ID2);
       }
     }
+
+    else if (op == "deposit")
+    {
+      input >> num;
+      money = std::stoi(num);
+      T[logedinID].balance += money;
+      std::cout << "success, " << T[logedinID].balance << " dollars in current account\n";
+    }
+    
+
   }
 
   return 0;
