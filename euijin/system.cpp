@@ -147,6 +147,29 @@ int main()
       }
     }
 
+    else if (op == "transfer")
+    {
+      input >> ID1 >> num;
+      money = std::stoi(num);
+      if (T.find(ID1) == T.end())
+        std::cout << "ID " << ID1 << " not found\n";
+      else if (T[logedinID].balance < money)
+        std::cout << "fail, " << T[logedinID].balance << " dollars only in current account\n";
+      else
+      {
+        T[ID1].log_idx.push_back(Hist.size());
+        T[logedinID].log_idx.push_back(Hist.size());
+
+        Log temp = Log(logedinID, ID1, money);
+        Hist.push_back(temp);
+
+        T[ID1].balance += money;
+        T[logedinID].balance -= money;
+
+        std::cout << "success, " << T[logedinID].balance << " dollars left in current account\n";
+      }
+    }
+
 
   }
 
