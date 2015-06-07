@@ -170,6 +170,30 @@ int main()
       }
     }
 
+    //find 안함
+
+    else if (op == "search")
+    {
+      input >> ID1;
+
+      if (T.find(ID1) == T.end())
+        std::cout << "ID " << ID1 << " not found\n";
+      else
+      {
+        std::vector<int> lst;
+        std::set_intersection(T[ID1].log_idx.begin(), T[ID1].log_idx.end(),
+            T[logedinID].log_idx.begin(), T[logedinID].log_idx.end(),
+            std::back_inserter(lst));
+        if (lst.empty())
+          std::cout << "no record\n";
+        else
+        {
+          for (std::vector<int>::iterator it = lst.begin(); it != lst.end(); ++it)
+            print_log(Hist[*it], logedinID);
+        }
+      }
+    }
+
 
   }
 
