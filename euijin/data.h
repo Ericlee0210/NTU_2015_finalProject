@@ -21,9 +21,10 @@ struct Info
   std::vector<int> log_idx;
 };
 
-
-
 typedef std::map<std::string, Info> AccountT;
 typedef std::vector<Log> History;
+
+void print_log(Log l, std::string ID);
+void print_info(std::string ID, AccountT T, History H);
 
 #endif
