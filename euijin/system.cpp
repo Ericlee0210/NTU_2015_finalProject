@@ -45,6 +45,20 @@ int main()
       }
     }
 
+    else if (op == "delete")
+    {
+      input >> ID1 >> PW1;
+      if (T.find(ID1) == T.end())
+        std::cout << "ID " << ID1 << " not found\n";
+      else if (T.find(ID1)->second.password != PW1)
+        std::cout << "wrong password\n";
+      else
+      {
+        std::cout << "success\n";
+        T.erase(ID1);
+      }
+    }
+
   }
 
   return 0;
