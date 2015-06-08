@@ -27,9 +27,10 @@ int main()
         temp.password = PW1;
         temp.balance = 0;
         T[ID1] = temp;
+        std::cout << "success\n";
       }
       else
-        std::cout << "ID " << ID1 << " exists, ";
+        std::cout << "ID " << ID1 << " exists, \n";
     }
 
     else if (op == "login") // log n
