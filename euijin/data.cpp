@@ -23,3 +23,41 @@ void print_info(std::string ID, AccountT T, History H)
   else std::cout << "ERROR!!\n";
 }
 
+bool smatch(std::string str1, std::string str2)
+{
+  std::string::iterator it1;
+  std::string::iterator it2;
+  std::string::iterator asterisk;
+  int flag = 0;
+  it1 = str1.begin();
+  it2 = str2.begin();
+
+  while(1)
+  {
+    if (it1 == str1.end() && it2 == str2.end())
+      return true; //?
+    if (it2 == str2.end() || it1 == str1.end())
+      return false;
+
+    if (*it1 == *it2 || *it2 == '?')
+    {
+      ++it1; ++it2;
+    }
+    else if (*it2 == '*')
+    {
+      flag = 1;
+      asterisk = it2;
+      ++it2;
+      if (it2 == str2.end()) // 별 마지막이면 다 트루
+        return true;
+    }
+    else if (flag == 1) // !!!!!!!!!계속 여기서 돈다 abc a*c 케이스
+    {
+      it2 = asterisk;
+      ++it2;
+      if (*it1 != *it2)
+        ++it1;
+    }
+    else return false;
+  }
+}
