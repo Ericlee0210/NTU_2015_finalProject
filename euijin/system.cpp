@@ -170,7 +170,26 @@ int main()
       }
     }
 
-    //find 안함
+    else if (op == "find")
+    {
+      input >> ID1;
+
+      int comma = 0;
+      for (AccountT::iterator it = T.begin(); it != T.end(); ++it)
+      {
+        if (smatch(it->first, ID1) && it->first != logedinID)
+        {
+          if (comma == 0)
+          {
+            std::cout << it->first;
+            comma = 1;
+          }
+          else
+            std::cout << ", " << it->first;
+        }
+      }
+      std::cout << std::endl;
+    }
 
     else if (op == "search")
     {
