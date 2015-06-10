@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include "data.h"
+#include "md5.h"
 
 int main()
 {
@@ -24,7 +25,7 @@ int main()
       if (T.find(ID1) == T.end()) // 아무것도 없을 때도 성립?
       {
         Info temp;
-        temp.password = PW1;
+        temp.password = md5(PW1);
         temp.balance = 0;
         T[ID1] = temp;
         std::cout << "success\n";
@@ -39,7 +40,7 @@ int main()
       AccountT::iterator id1_pos = T.find(ID1);
       if (id1_pos == T.end())
         std::cout << "ID " << ID1 << " not found\n";
-      else if (id1_pos->second.password != PW1)
+      else if (md5(id1_pos->second.password) != PW1)
         std::cout << "wrong password\n";
       else
       {
@@ -54,7 +55,7 @@ int main()
       AccountT::iterator id1_pos = T.find(ID1);
       if (id1_pos == T.end())
         std::cout << "ID " << ID1 << " not found\n";
-      else if (id1_pos->second.password != PW1)
+      else if (md5(id1_pos->second.password) != PW1)
         std::cout << "wrong password\n";
       else
       {
@@ -72,9 +73,9 @@ int main()
         std::cout << "ID " << ID1 << " not found\n";
       else if (id2_pos == T.end())
         std::cout << "ID " << ID2 << " not found\n";
-      else if (id1_pos->second.password != PW1)
+      else if (md5(id1_pos->second.password) != PW1)
         std::cout << "wrong password1\n";
-      else if (id2_pos->second.password != PW2)
+      else if (md5(id2_pos->second.password) != PW2)
         std::cout << "wrong password2\n";
       else
       {
