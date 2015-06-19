@@ -4,9 +4,9 @@
 void print_log(Log l, std::string ID)
 {
   if (l.from == ID)
-    std::cout << "\t To " << l.to << " " << l.amount << std::endl;
+    std::cout << "To " << l.to << " " << l.amount << std::endl;
   else if (l.to == ID)
-    std::cout << "\t From " << l.from << " " << l.amount << std::endl;
+    std::cout << "From " << l.from << " " << l.amount << std::endl;
 
 }
 

@@ -7,6 +7,8 @@
 // 추천수가 열개 안되고 다읽으면 멈추는 코드 집어 넣기
 // 템프에 넣기전에 검사하는 코드 넣기
 // 자기 자식 빼는 것도 안넣음
+// 글자길이 안넘어가게 
+// print 할 때 투먼전지 프롬먼전지도 체크해야함 머지한 것의 경우 이런경우가 생길 수 있는가
 
 int func(int n)
 {
@@ -162,7 +164,7 @@ std::vector<std::string> change_char_at_pos(std::string str, std::vector<int> N)
   return result;
 }
 
-std::vector<std::string> recommend(std::string str, AccountT Table)
+std::vector<std::string> recommend_for_create(std::string str, AccountT Table)
 {
   int score = 1;
   std::vector<std::string> result;
@@ -233,6 +235,25 @@ std::vector<std::string> recommend(std::string str, AccountT Table)
   return result;
 }
 
+std::vector<std::string> recommend_for_transfer(std::string input, std::string logedin, AccountT Table)
+{
+  std::vector<std::string> result;
+  if (Table.size() <= 11)
+  {
+    for (AccountT::iterator it = Table.begin(); it != Table.end(); ++it)
+      if (it->first != logedin)
+        result.push_back(it->first);
+
+    return result;
+  }
+  else
+  {
+    
+  }
+
+  return result;
+}
+
 int main()
 {
   std::string row;
@@ -262,11 +283,14 @@ int main()
       }
       else
       {
-        std::cout << "ID " << ID1 << " exists, \n";
-        std::vector<std::string> recV = recommend(ID1, T);
-        std::cout << "****************\n";
+        std::cout << "ID " << ID1 << " exists, ";
+        std::vector<std::string> recV = recommend_for_create(ID1, T);
         for (int i=0;i<recV.size();i++)
-          std::cout << recV[i] << ", ";
+        {
+          std::cout << recV[i];
+          if (i != recV.size() - 1)
+            std::cout << ", ";
+        }
         std::cout << std::endl;
       }
     }
@@ -277,7 +301,7 @@ int main()
       AccountT::iterator id1_pos = T.find(ID1);
       if (id1_pos == T.end())
         std::cout << "ID " << ID1 << " not found\n";
-      else if (md5(id1_pos->second.password) != PW1)
+      else if (id1_pos->second.password != md5(PW1))
         std::cout << "wrong password\n";
       else
       {
@@ -310,9 +334,9 @@ int main()
         std::cout << "ID " << ID1 << " not found\n";
       else if (id2_pos == T.end())
         std::cout << "ID " << ID2 << " not found\n";
-      else if (md5(id1_pos->second.password) != PW1)
+      else if (id1_pos->second.password != md5(PW1))
         std::cout << "wrong password1\n";
-      else if (md5(id2_pos->second.password) != PW2)
+      else if (id2_pos->second.password != md5(PW2))
         std::cout << "wrong password2\n";
       else
       {
@@ -362,6 +386,8 @@ int main()
 
         id1_pos->second.balance += id2_pos->second.balance;
         T.erase(ID2);
+
+        std::cout << "success, " << ID1 << " has " << id1_pos->second.balance << " dollars\n";
       }
     }
 
@@ -447,6 +473,7 @@ int main()
         else
         {
           for (std::vector<int>::iterator it = lst.begin(); it != lst.end(); ++it)
+            //************************여기 체크해라
             print_log(Hist[*it], logedinID);
         }
       }
