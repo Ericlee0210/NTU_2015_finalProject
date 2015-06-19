@@ -5,30 +5,31 @@
 #include "math.h"
 
 // AccountT = std::map<std::string, Info>
-int func(int n)
-{
-  return (-1 + sqrt(1 + 8 * n)) / 2;
-}
 
-int score(std::string str1, std::string str2)
-{
-  int min = std::min(str1.length(), str2.length());
-  int max = std::max(str1.length(), str2.length());
-  int temp = (max - min) * (max - min + 1) / 2;
-  for (int i = 0; i < min; i++)
-    if (str1[i] != str2[i])
-      temp += min - i;
-  return temp;
-}
+//int score(std::string str1, std::string str2)
+//{
+//  int min = std::min(str1.length(), str2.length());
+//  int max = std::max(str1.length(), str2.length());
+//  int temp = (max - min) * (max - min + 1) / 2;
+//  for (int i = 0; i < min; i++)
+//    if (str1[i] != str2[i])
+//      temp += min - i;
+//  return temp;
+//}
 
-std::vector<std::vector<int> > get_pos_set(int n) // 순서는 (7) -> (6->1) -> (
+/* Input : score
+ * Output : vector of int vector, each int vector is set of position which make sum as score 
+ * example)
+ * Input : 5
+ * Output : (5) -> (4->1) -> (3->2) */
+std::vector<std::vector<int> > get_pos_set(int n)
 {
-  std::vector<std::vector<std::vector<int> > > table;
+  std::vector<std::vector<std::vector<int> > > table; // Save all list of output for each score input
   std::vector<std::vector<int> > temp_lst;
   std::vector<int> temp_set;
 
   if (n == 0)
-    return temp_lst;
+    return temp_lst; // output has no content so that we can check with size() funtion
 
   temp_set.push_back(1);
   temp_lst.push_back(temp_set);
@@ -73,21 +74,11 @@ std::vector<std::vector<int> > get_pos_set(int n) // 순서는 (7) -> (6->1) -> 
   return table[n-1];
 }
 
-void print_get_sum(std::vector<std::vector<int> > V)
-{
-  for (std::vector<std::vector<int> >::iterator it = V.begin(); it != V.end(); ++it)
-  {
-    std::cout << "[ ";
-    for(std::vector<int>::iterator inner_it = it->begin(); inner_it != it->end(); ++inner_it)
-    {
-      std::cout << *inner_it << ", ";
-    }
-    std::cout << " ] -> ";
-  }
-  std::cout << std::endl;
-}
-
-std::vector<std::string> permute(int n)
+/* Input : length we want to make
+ * Output : vector of permuted string
+ * example)
+ * Input : 3 -> Output : 000 to zzz */
+std::vector<std::string> permute(int n) // If we put those function inside main function, is it okay with memory?
 {
   std::vector<std::string> result;
   std::string set[] = {"a","b","c","d","e"};
@@ -119,10 +110,15 @@ std::vector<std::string> permute(int n)
   }
 }
 
+/* Input : string which we want to change, vector of position
+ * Output : vector of changed string
+ * example)
+ * Input : string , 4->2
+ * Output : st?i?g (? can be 0 to z) */
 std::vector<std::string> change_char_at_pos(std::string str, std::vector<int> N) // 숫자 벡터가 idx를 0부터 카운트한다고 생각하고 함.
 {
   std::vector<std::string> result;
-  result.push_back(""); // 아무것도 없으면 시작 안됨?
+  result.push_back(""); // If it is empty I can start so add empty string.
   std::string set[] = {"a","b","c","d","e"};
 //  std::string set[] = {"0","1","2","3","4","5","6","7","8","9",
 //    "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
@@ -131,7 +127,7 @@ std::vector<std::string> change_char_at_pos(std::string str, std::vector<int> N)
   int idx = 0;
   std::vector<int>::iterator pos = N.begin();
 
-  while(pos != N.end())
+  while(pos != N.end()) // During iterations, when we confront pos change it from 0 to z.
   {
     if (str.length() - *pos > idx)
     {
@@ -147,7 +143,7 @@ std::vector<std::string> change_char_at_pos(std::string str, std::vector<int> N)
       {
        // for (int i=0;i<62;i++)
         for (int i=0;i<5;i++)
-          tempV.push_back(*it + set[i]); //여기서 바뀐다
+          tempV.push_back(*it + set[i]);
       }
       result = tempV;
       tempV.clear();
@@ -155,7 +151,7 @@ std::vector<std::string> change_char_at_pos(std::string str, std::vector<int> N)
     }
   }
 
-  if (idx < str.length())
+  if (idx < str.length()) // If while loop ends because we changed all, add left part of string.
   {
     while (idx < str.length())
     {
@@ -168,35 +164,39 @@ std::vector<std::string> change_char_at_pos(std::string str, std::vector<int> N)
   return result;
 }
 
-//std::vector<std::string> recommend(std::string str, AccountT Table)
+/* Input : string
+ * Output : vector of string which we recommend 
+ * Algorithm :
+ * Iterate by score
+ * Divide score as score_by_length and score_by_modification
+ * There are two way to recommend, One is Cut first and Modify, The other is Modify first and Add permutation */
 std::vector<std::string> recommend(std::string str)
 {
   int score = 1;
   std::vector<std::string> result;
 
-
   while (1)
   {
     std::vector<std::string> temp; // 임시로 모아둠
 
-    int s_len = 0; // 0-1-3-6-10
+    int s_len = 0;
     int s_mod; // score - s_len
-    int p_cnt = 0; // 0-1-2-3-4
+    int p_cnt = 0;
 
-    std::cout << "**************************\nSCORE : " << score << "\n*********************\n";
+//    std::cout << "**************************\nSCORE : " << score << "\n*********************\n";
     while (s_len <= score)
     {
       s_mod = score - s_len;
 
       std::vector<std::vector<int> > pos_set = get_pos_set(s_mod);
 
-      std::cout << "SCORE : " << score << " s_len : " << s_len << " s_mod : " << s_mod << std::endl;
+//      std::cout << "SCORE : " << score << " s_len : " << s_len << " s_mod : " << s_mod << std::endl;
 
-      //(자르고) 바꾸기
+      // First step cut first and modify
       if (str.length() > p_cnt)
       {
-        std::string temp_str = str.substr(0, str.length() - p_cnt); // 없는 것
-        if (pos_set.size() == 0)
+        std::string temp_str = str.substr(0, str.length() - p_cnt);
+        if (pos_set.size() == 0) // Add string only cut
           temp.push_back(temp_str);
         else
         {
@@ -211,15 +211,14 @@ std::vector<std::string> recommend(std::string str)
         }
       }
 
-
-      // 바꾸고 더하기
+      // Second step modify first and add permutation
       std::vector<std::string> pmt = permute(p_cnt);
 
       if (pmt.size() != 0)
       {
-        if (str.length() + p_cnt <= 100)
+        if (str.length() + p_cnt <= 100) // Length of ID should be less than 100
         {
-          if (pos_set.size() == 0)
+          if (pos_set.size() == 0) // s_mod is 0
           {
             for (std::vector<std::string>::iterator it = pmt.begin(); it != pmt.end(); ++it)
               temp.push_back(str + *it);
