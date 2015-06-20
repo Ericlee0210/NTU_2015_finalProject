@@ -184,21 +184,17 @@ std::vector<std::string> recommend_for_create(std::string str, AccountT Table)
 
   while(1)
   {
-//    std::cout << "*****SCORE " << score << " *******\n";
     std::vector<std::string> temp;
 
     int s_len = 0;
     int s_mod; // score - s_len
     int p_cnt = 0;
 
-    //    std::cout << "**************************\nSCORE : " << score << "\n*********************\n";
     while (s_len <= score)
     {
       s_mod = score - s_len;
 
       std::vector<std::vector<int> > pos_set = get_pos_set(s_mod);
-
-      //      std::cout << "SCORE : " << score << " s_len : " << s_len << " s_mod : " << s_mod << std::endl;
 
       // First step cut first and modify
       if (str.length() > p_cnt)
@@ -248,13 +244,9 @@ std::vector<std::string> recommend_for_create(std::string str, AccountT Table)
         }
       }
 
-      //      for (std::vector<std::string>::iterator it = temp.begin(); it != temp.end(); ++it)
-      //        std::cout << *it << std::endl;
-
       p_cnt++;
       s_len += p_cnt;
     }
-    //    std::cout << "*****SCORE " << score << " *******\n";
 
     std::sort(temp.begin(),temp.end());
 
@@ -277,13 +269,6 @@ std::vector<std::string> recommend_for_create(std::string str, AccountT Table)
       ++it;
     }
 
-//    std::cout << "TEMP\n";
-//    for (int i=0;i<temp.size();i++)
-//      std::cout << temp[i] << std::endl;
-//    std::cout << "RESULT\n";
-//    for (int i=0;i<result.size();i++)
-//      std::cout << result[i] << std::endl;
-
     if (result.size() == 10)
       break;
 
@@ -295,21 +280,44 @@ std::vector<std::string> recommend_for_create(std::string str, AccountT Table)
   return result;
 }
 
-std::vector<std::string> recommend_for_transfer(std::string input, std::string logedin, AccountT Table)
+std::vector<std::pair<int, std::string> > put_into_vector(int n, std::string str, std::vector<std::pair<int, std::string> > V)
 {
-  std::vector<std::string> result;
-  if (Table.size() <= 11)
-  {
-    for (AccountT::iterator it = Table.begin(); it != Table.end(); ++it)
-      if (it->first != logedin)
-        result.push_back(it->first);
+  if (V.size() >= 10)
+    if (V.back().first < n || (V.back().first == n && str.compare(V.back().second) >= 0))
+      return V;
 
-    return result;
-  }
+  if (V.size() == 0)
+    V.push_back(std::make_pair(n, str));
   else
   {
-    
+    std::vector<std::pair<int, std::string> >::iterator it = V.begin();
+    while (1)
+    {
+      if (it == V.end())
+      {
+        if (V.size() < 10) { V.push_back(std::make_pair(n, str)); break; }
+      }
+      else if (it->first > n || (it->first == n && str.compare(it->second) < 0))
+      {
+        it = V.insert(it, std::make_pair(n, str));
+        if (V.size() >= 10) V.pop_back();
+        break;
+      }
+      else
+        ++it;
+    }
   }
+
+  return V;
+}
+
+std::vector<std::pair<int, std::string> > recommend_for_transfer(std::string input, std::string logedin, AccountT Table)
+{
+  std::vector<std::pair<int, std::string> > result;
+
+  for (AccountT::iterator it = Table.begin(); it != Table.end(); ++it)
+    if (it->first != logedin)
+      result = put_into_vector(score(input, it->first), it->first, result);
 
   return result;
 }
@@ -477,7 +485,17 @@ int main()
       input >> ID1 >> num;
       money = std::stoi(num);
       if (T.find(ID1) == T.end())
-        std::cout << "ID " << ID1 << " not found\n";
+      {
+        std::cout << "ID " << ID1 << " not found, ";
+        std::vector<std::pair<int, std::string> > recV = recommend_for_transfer(ID1, logedinID, T);
+        for (int i=0;i<recV.size();i++)
+        {
+          std::cout << recV[i].second;
+          if (i != recV.size() - 1)
+            std::cout << ", ";
+        }
+        std::cout << std::endl;
+      }
       else if (T[logedinID].balance < money)
         std::cout << "fail, " << T[logedinID].balance << " dollars only in current account\n";
       else
@@ -532,8 +550,7 @@ int main()
           std::cout << "no record\n";
         else
         {
-          for (std::vector<int>::iterator it = lst.begin(); it != lst.end(); ++it)
-            //************************여기 체크해라
+          for (std::vector<int>::iterator it = lst.begin(); it != lst.end(); ++it) //여기 체크
             print_log(Hist[*it], logedinID);
         }
       }
