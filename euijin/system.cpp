@@ -8,11 +8,6 @@
 // 자기 자식 빼는 것도 안넣음
 // print 할 때 투먼전지 프롬먼전지도 체크해야함 머지한 것의 경우 이런경우가 생길 수 있는가
 
-int func(int n)
-{
-  return (-1 + sqrt(1 + 8 * n)) / 2;
-}
-
 int score(std::string str1, std::string str2)
 {
   int min = std::min(str1.length(), str2.length());
@@ -88,18 +83,18 @@ std::vector<std::vector<int> > get_pos_set(int n)
 std::vector<std::string> permute(int n) // If we put those function inside main function, is it okay with memory?
 {
   std::vector<std::string> result;
-  std::string set[] = {"a","b","c","d","e"};
-//  std::string set[] = {"0","1","2","3","4","5","6","7","8","9",
-//   "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
-//    "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
+//  std::string set[] = {"a","b","c","d","e"};
+  std::string set[] = {"0","1","2","3","4","5","6","7","8","9",
+   "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+    "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
 
   if (n == 0)
     return result;
 
   if (n == 1)
   {
-    //for (int i=0;i<62;i++)
-    for (int i=0;i<5;i++)
+//    for (int i=0;i<5;i++)
+    for (int i=0;i<62;i++)
       result.push_back(set[i]);
     return result;
   }
@@ -109,8 +104,8 @@ std::vector<std::string> permute(int n) // If we put those function inside main 
     std::vector<std::string> temp = permute(n-1);
     for (std::vector<std::string>::iterator it = temp.begin(); it != temp.end(); ++it)
     {
-      //for (int i=0;i<62;i++)
-      for (int i=0;i<5;i++)
+//      for (int i=0;i<5;i++)
+      for (int i=0;i<62;i++)
         result.push_back(*it + set[i]);
     }
     return result;
@@ -126,10 +121,10 @@ std::vector<std::string> change_char_at_pos(std::string str, std::vector<int> N)
 {
   std::vector<std::string> result;
   result.push_back(""); // If it is empty I can start so add empty string.
-  std::string set[] = {"a","b","c","d","e"};
-//  std::string set[] = {"0","1","2","3","4","5","6","7","8","9",
-//    "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
-//    "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
+//  std::string set[] = {"a","b","c","d","e"};
+  std::string set[] = {"0","1","2","3","4","5","6","7","8","9",
+    "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
+    "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
 
   int idx = 0;
   std::vector<int>::iterator pos = N.begin();
@@ -148,8 +143,8 @@ std::vector<std::string> change_char_at_pos(std::string str, std::vector<int> N)
       std::vector<std::string> tempV;
       for (std::vector<std::string>::iterator it = result.begin(); it != result.end(); ++it)
       {
-       // for (int i=0;i<62;i++)
-        for (int i=0;i<5;i++)
+//        for (int i=0;i<5;i++)
+        for (int i=0;i<62;i++)
           tempV.push_back(*it + set[i]);
       }
       result = tempV;
@@ -280,13 +275,15 @@ std::vector<std::string> recommend_for_create(std::string str, AccountT Table)
   return result;
 }
 
+/* This function is similar to insert into priority queue.
+ * First element of pair is score and second one is real contents. */
 std::vector<std::pair<int, std::string> > put_into_vector(int n, std::string str, std::vector<std::pair<int, std::string> > V)
 {
-  if (V.size() >= 10)
+  if (V.size() >= 10) // In this case, we don't need to add element. It is for making this code faster.
     if (V.back().first < n || (V.back().first == n && str.compare(V.back().second) >= 0))
       return V;
 
-  if (V.size() == 0)
+  if (V.size() == 0) // For initialize
     V.push_back(std::make_pair(n, str));
   else
   {
@@ -311,6 +308,7 @@ std::vector<std::pair<int, std::string> > put_into_vector(int n, std::string str
   return V;
 }
 
+/* Output : list of recommended ID sorted by score order */
 std::vector<std::pair<int, std::string> > recommend_for_transfer(std::string input, std::string logedin, AccountT Table)
 {
   std::vector<std::pair<int, std::string> > result;
