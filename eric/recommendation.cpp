@@ -27,30 +27,29 @@ str_vector RESULT_BY_CHANGE_CHAR;
  * Output : (5) -> (4->1) -> (3->2) */
 void get_pos_set(const int & n)
 {
+  static bool flag = 1;
   m_vector temp_lst;
   s_vector temp_set;
 
   if (n == 0) return;// output has no content so that we can check with size() funtion
 
-  if(TABLE[0].size()==0)
+  if(flag)
   {
     temp_set.push_back(1);
     temp_lst.push_back(temp_set);
     TABLE.push_back(temp_lst);
     temp_set.clear();
     temp_lst.clear();
-  }
-  if (n == 1) return;
 
-  if(TABLE[1].size()==0)
-  {
     temp_set.push_back(2);
     temp_lst.push_back(temp_set);
     TABLE.push_back(temp_lst);
     temp_set.clear();
     temp_lst.clear();
+
+    flag=0;
   }
-  if (n == 2) return;
+  if (n==1 || n == 2) return;
 
   for (int i = 3; i <= n; i++)
   {
@@ -61,23 +60,25 @@ void get_pos_set(const int & n)
 
     temp_set.push_back(i);
     temp_lst.push_back(temp_set);
+    temp_set.clear();
 
     int cnt = i-1;
     while(cnt > i/2)
     {
       for (m_vector::iterator it = TABLE[i-cnt-1].begin(); it != TABLE[i-cnt-1].end(); ++it)
       {
-        temp_set.clear();
         temp_set.push_back(cnt);
 
         for(s_vector::iterator inner_it = it->begin(); inner_it != it->end(); ++inner_it)
           temp_set.push_back(*inner_it);
 
         temp_lst.push_back(temp_set);
+        temp_set.clear();
       }
       cnt--;
     }
     TABLE.push_back(temp_lst);
+    temp_lst.clear();
   }
   return;
 }
@@ -86,7 +87,7 @@ void get_pos_set(const int & n)
  * Output : vector of permuted string
  * example)
  * Input : 3 -> Output : 000 to zzz */
-str_vector permute(int n) // If we put those function inside main function, is it okay with memory?
+str_vector permute(const int & n) // If we put those function inside main function, is it okay with memory?
 {
   str_vector result;
   std::string set[] = {"a","b","c","d","e"};
@@ -104,7 +105,6 @@ str_vector permute(int n) // If we put those function inside main function, is i
       result.push_back(set[i]);
     return result;
   }
-
   else
   {
     str_vector temp = permute(n-1);
@@ -132,7 +132,7 @@ void change_char_at_pos(const std::string & str, const s_vector & N) // 숫자 �
 //  "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
 
   int idx = 0;
-  s_vector::iterator pos = N.begin();
+  s_vector::const_iterator pos = N.begin();
 
   while(pos != N.end()) // During iterations, when we confront pos change it from 0 to z.
   {
@@ -159,7 +159,7 @@ void change_char_at_pos(const std::string & str, const s_vector & N) // 숫자 �
 
   while (idx < str.length()) // If while loop ends because we changed all, add left part of string.
   {
-    for (str_vector::::iterator it = RESULT_BY_CHANGE_CHAR.begin(); it != RESULT_BY_CHANGE_CHAR.end(); ++it)
+    for (str_vector::iterator it = RESULT_BY_CHANGE_CHAR.begin(); it != RESULT_BY_CHANGE_CHAR.end(); ++it)
       *it += str[idx];
     idx++;
   }
@@ -217,21 +217,22 @@ str_vector recommend(const std::string & str)
       {
         if (str.length() + p_cnt <= 100) // Length of ID should be less than 100
         {
-          if (pos_set.size() == 0) // s_mod is 0
+          if (s_mod == 0) // s_mod is 0
             for (str_vector::iterator it = pmt.begin(); it != pmt.end(); ++it)
               temp.push_back(str + *it);
           else
           {
-            for (m_vector::iterator it = pos_set.begin(); it != pos_set.end(); ++it)
+            for (m_vector::iterator it = TABLE[s_mod-1].begin(); it != TABLE[s_mod-1].end(); ++it)
             {
               if (it->front() <= str.length())
               {
                 change_char_at_pos(str, *it);
 
-                for (str_vector::iterator i_it = RESULT_BY_CHANGE_CHAR.begin(); i_it != tRESULT_BY_CHANGE_CHAR.end(); ++i_it)
+                for (str_vector::iterator i_it = RESULT_BY_CHANGE_CHAR.begin(); i_it != RESULT_BY_CHANGE_CHAR.end(); ++i_it)
                   for (std::vector<std::string>::iterator ii_it = pmt.begin(); ii_it != pmt.end(); ++ii_it)
                     temp.push_back(*i_it + *ii_it);
               }
+              RESULT_BY_CHANGE_CHAR.clear();
             }
           }
         }
@@ -247,11 +248,19 @@ str_vector recommend(const std::string & str)
 
     std::sort(temp.begin(),temp.end());
 
+    std::cout << "success" << std::endl;
+
     str_vector::iterator it = temp.begin();
-    while(result.size() < 100 && it != temp.end())
+
+    while(result.size() < 10000 && it != temp.end())
     {
-      if (*it != str && *it != result.back())
+      if (*it != str)
+      {
+        if (result.size() != 0 && *it != result.back())
           result.push_back(*it);
+        else if (result.size() == 0)
+          result.push_back(*it);
+      }
       ++it;
     }
 
@@ -262,7 +271,7 @@ str_vector recommend(const std::string & str)
 //    for (int i=0;i<result.size();i++)
 //      std::cout << result[i] << std::endl;
 
-    if (result.size() == 100)
+    if (result.size() == 10000)
       break;
 
     score++;
@@ -283,6 +292,22 @@ int main()
   info.balance = 3;
   AccountT Table;
   Table["abc"] = info;
+
+  get_pos_set(10);
+  //for(m_vector::iterator it=TABLE[9].begin(); it!=TABLE[9].end(); ++it)
+  //{
+  //  for(s_vector::iterator iit=it->begin(); iit!=it->end(); ++iit)
+  //    std::cout << *iit << " ";
+  //  std::cout << std::endl;
+  //}
+
+  //str_vector tmp = permute(2);
+  //for(str_vector::iterator it=tmp.begin(); it!=tmp.end(); ++it)
+  //  std::cout << *it << std::endl;
+
+  //change_char_at_pos("string", TABLE[4][1]);
+  //for(str_vector::iterator it=RESULT_BY_CHANGE_CHAR.begin(); it!=RESULT_BY_CHANGE_CHAR.end(); ++it)
+  //  std::cout << *it << std::endl;
 
   std::vector<std::string> result = recommend(str1);
   std::cout << "*********************\nRESULT\n************************\n";
