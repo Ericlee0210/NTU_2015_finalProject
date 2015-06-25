@@ -3,10 +3,24 @@
 #include <string>
 #include <string.h>
 #include <utility>
+#include "recommendation.h"
 using std::cout;
 using std::endl;
 
-std::pair<bool, int> table::check(const std::string & id)
+struct myclass
+{
+    int score;
+    std::string stringValue;
+
+    MyStruct(int s, const std::stringValue& s) : score(k), stringValue(s) {}
+
+    bool operator < (const myclass& str) const
+    {
+        return (score < str.score);
+    }
+};
+
+std::pair<bool, int> account_table::check(const std::string & id)
 {
 	std::pair<bool, int> output;
 	int head =0;
@@ -30,7 +44,7 @@ std::pair<bool, int> table::check(const std::string & id)
 	return output = std::make_pair(false, mid);
 }
 
-void table::login(const std::string & id, const std::string & cpassword)
+void account_table::login(const std::string & id, const std::string & cpassword)
 {
 	std::pair<bool, int> output;
 	output.first = check(id);
@@ -50,14 +64,16 @@ void table::login(const std::string & id, const std::string & cpassword)
 	return;
 }
 
-void table::create(const std::string & id, const std::string & cpassword)
+void account_table::create(const std::string & id, const std::string & cpassword)
 {
 	std::pair<bool, int> output;
 	output.first = check(id);
 	if(output.first)
 	{
 		cout << "ID " << id << " exists, ";
-		/******need to list all the recommanded id********/ 	
+
+		str_vector result; result.reserve(10);
+		recommend(id, reuslt);
 	}
 	else //id doesn't exist, so creat a new one
 	{
@@ -80,7 +96,7 @@ void table::create(const std::string & id, const std::string & cpassword)
 	return;
 }
 
-void table::delete(const std::string & id, const std::string & cpassword)
+void account_table::delete(const std::string & id, const std::string & cpassword)
 {
 	std::pair<bool, int> output;
 	output.first = check(id);
@@ -115,16 +131,21 @@ void merge(const std::string & id1, const std::string & cpassword1, const std::s
 		cout << "wrong password2" << endl;
 	else
 	{
-		this->account_list.at(output1.second)->balance += this->account_list.at(out2.second)->balance;
-		int_64 tmp = this->account_list.at(output1.second)->balance;
+		int_64 & tmp = this->account_list.at(output1.second)->balance;
+		tmp += this->account_list.at(out2.second)->balance;
 		/*****************change all the ID of transactions of id2 to id1 *********************/
+		for(std::vector<log>::iterator it = this->account_list.transactions.begin(); it!=account_list.transactions.end(); ++it)
+		{
+			if(it->from == id2) it->from == id1;
+			if(it->to   == id2) it->to   == id1;
+		}
 		this->accout_list.erase(this->account_list.begin()+output2.second);
 		cout << "success, " << id1 << " has " << tmp << " dollars" << endl;
 	}
 	return;
 }
 
-void table::deposit(const int_64 & a)
+void account_table::deposit(const int_64 & a)
 {
 	int_64 & tmp = this->account_list.at(last_successful_login_id_index)->balance;
 	tmp += a;
@@ -132,7 +153,7 @@ void table::deposit(const int_64 & a)
 	return;
 }
 
-void table::withdraw(const int_64 & a)
+void account_table::withdraw(const int_64 & a)
 {
 	int_64 & tmp = this->account_list.at(last_successful_login_id_index)->balance;
 	if( a > tmp )
@@ -152,8 +173,33 @@ void transfer(const std::string & id, const int_64 & a)
 	output.first = check(id);
 	if(!output.first)
 	{
-		cout << "ID "<< id <<" not found,";
-		/***********recommand for existing id***************/
+		cout << "ID "<< id <<" not found, ";
+
+		std::vector<myclass> score_list;
+		score_list.reserve(this->account_list.size());
+		int i=0
+		/***********recommend for existing id***************/
+		for(std::vector<info*>::iterator it = this->account_list.begin(); it!=this->account_list.end(); ++it )
+		{
+			if(it->id == id) continue;
+			score_list[i].stringValue = it->id;
+			score_list[i++].score = score(id, it->id);
+		}
+
+		std::sort(score_list.begin(), score_list.end());
+		
+		for(int ii = 10; ii < i; ++ii)
+		{
+			if(score_list[ii] == score_list[9]) continue;
+			else break;
+		}
+		for(int iii = 0; iii< ii; ++iii)
+		{
+			if(iii!= ii-1)
+				cout << score_list[iii].stringValue << ",";
+			else
+				cout << score_list[iii].stringValue;
+		}
 		cout << endl;
 	}
 	else if(tmp < a)
