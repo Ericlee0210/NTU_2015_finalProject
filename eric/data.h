@@ -4,14 +4,14 @@
 #include <vector>
 #include <utility>
 typedef unsigned long long int int_64;
-int_64 max_account_list_size 10000000;
+int_64 account_size 10000000;
 
 struct log
 {
 	std::string from;
 	std::string to;
 	int_64 amount;
-	log(std::string f, std::string t, int_64 a): from_to(f), to(t), amount(a){}
+	log(std::string f, std::string t, int_64 a): from(f), to(t), amount(a){}
 };
 
 int_64 log::int_64 time=0;
@@ -25,14 +25,14 @@ struct info
 	info(std::string i, std::string p, int_64 m):id(i), cpassword(p), balance(m){}
 };
 
-struct table
+struct account_table
 {
-	std::vector<info*> account_list(max_account_list_size);
-    std::vector<log> transactions(max_account_list_size);
+	std::vector<info*> account_list(account_size);
+    std::vector<log> transactions(account_size);
 	int_64 last_successful_login_id_index;
 	std::string last_successful_login_id;
 
-	table(int_64 index, std::string id):last_successful_login_id_index(index), last_successful_login_id(id){}
+	account_table(int_64 index, std::string id):last_successful_login_id_index(index), last_successful_login_id(id){}
 
 	std::pair<bool, int> check(const std::string & id);
 	void login(const std::string & id, const std::string & cpassword);
