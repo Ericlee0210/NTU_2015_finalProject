@@ -1,8 +1,7 @@
 #include <iostream>
-#include <sstream>
 #include <vector>
-#include "data.h"
-#include "math.h"
+#include <algorithm>
+#include "recommendation.h"
 
 typedef std::vector<std::vector<std::vector<int> > > b_vector;
 typedef std::vector<std::vector<int> >               m_vector;
@@ -19,6 +18,20 @@ b_vector TABLE;
 
 /* Saves all examples of permutation in change_char_at_pos funcitons */
 str_vector RESULT_BY_CHANGE_CHAR;
+
+int score(const std::string & str1, const std::string & str2)
+{
+  str1_l = str1.length();
+  str2_l = str2.length();
+  int min = std::min(str1_l, str2_l);
+  int delta = (str1_l-str2_l>0)?(str1_l-str2_l):(str2_l-str1_l)
+  int temp = delta * (delta+1) / 2;
+  for (int i = 0; i < min; i++)
+    if (str1[i] != str2[i])
+      temp += (min - i);
+  return temp;
+}
+
 
 /* Input : score
  * Output : vector of int vector, each int vector is set of position which make sum as score 
@@ -173,10 +186,9 @@ void change_char_at_pos(const std::string & str, const s_vector & N) // 숫자 �
  * Iterate by score
  * Divide score as score_by_length and score_by_modification
  * There are two way to recommend, One is Cut first and Modify, The other is Modify first and Add permutation */
-str_vector recommend(const std::string & str)
+void recommend(const std::string & str, str_vector & result, , const int & numbers)
 {
   int score = 1;
-  str_vector result;
 
   while (1)
   {
@@ -248,11 +260,11 @@ str_vector recommend(const std::string & str)
 
     std::sort(temp.begin(),temp.end());
 
-    std::cout << "success" << std::endl;
+    //std::cout << "success" << std::endl;
 
     str_vector::iterator it = temp.begin();
 
-    while(result.size() < 10000 && it != temp.end())
+    while(result.size() < numbers && it != temp.end())
     {
       if (*it != str)
       {
@@ -271,7 +283,7 @@ str_vector recommend(const std::string & str)
 //    for (int i=0;i<result.size();i++)
 //      std::cout << result[i] << std::endl;
 
-    if (result.size() == 10000)
+    if (result.size() == numbers)
       break;
 
     score++;
@@ -279,42 +291,5 @@ str_vector recommend(const std::string & str)
     temp.clear();
   }
 
-  return result;
-}
-
-int main()
-{
-  std::string row;
-  std::string str1, str2;
-  str1 = "abc";
-  Info info;
-  info.password = "123";
-  info.balance = 3;
-  AccountT Table;
-  Table["abc"] = info;
-
-  get_pos_set(10);
-  //for(m_vector::iterator it=TABLE[9].begin(); it!=TABLE[9].end(); ++it)
-  //{
-  //  for(s_vector::iterator iit=it->begin(); iit!=it->end(); ++iit)
-  //    std::cout << *iit << " ";
-  //  std::cout << std::endl;
-  //}
-
-  //str_vector tmp = permute(2);
-  //for(str_vector::iterator it=tmp.begin(); it!=tmp.end(); ++it)
-  //  std::cout << *it << std::endl;
-
-  //change_char_at_pos("string", TABLE[4][1]);
-  //for(str_vector::iterator it=RESULT_BY_CHANGE_CHAR.begin(); it!=RESULT_BY_CHANGE_CHAR.end(); ++it)
-  //  std::cout << *it << std::endl;
-
-  std::vector<std::string> result = recommend(str1);
-  std::cout << "*********************\nRESULT\n************************\n";
-  for (int i=0;i<result.size();i++)
-  {
-    std::cout << result[i] << std::endl;
-  }
-
-  return 0;
+  return;
 }
