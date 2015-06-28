@@ -73,7 +73,15 @@ void account_table::create(const std::string & id, const std::string & cpassword
 		cout << "ID " << id << " exists, ";
 
 		str_vector result; result.reserve(10);
-		recommend(id, reuslt);
+		recommend(id, reuslt, 10);
+		for(int i=0; i<result.size(); ++i)
+		{
+			if(i==0)
+				std::cout << result[i];
+			else
+				std::cout << "," << result[i];
+		}
+		std::cout << std::endl;
 	}
 	else //id doesn't exist, so creat a new one
 	{
@@ -115,7 +123,7 @@ void account_table::delete(const std::string & id, const std::string & cpassword
 	return;
 }
 
-void merge(const std::string & id1, const std::string & cpassword1, const std::string & id2, const std::string & cpassword2)
+void account_table::merge(const std::string & id1, const std::string & cpassword1, const std::string & id2, const std::string & cpassword2)
 {
 	std::pair<bool, int> output1;
 	output1.first = check(id1);
@@ -166,7 +174,7 @@ void account_table::withdraw(const int_64 & a)
 	return;
 }
 
-void transfer(const std::string & id, const int_64 & a)
+void account_table::transfer(const std::string & id, const int_64 & a)
 {
 	int_64 & tmp = this->account_list.at(last_successful_login_id_index)->balance;
 	std::pair<bool, int> output;
@@ -214,7 +222,7 @@ void transfer(const std::string & id, const int_64 & a)
 	return;
 }
 
-void find(const std::string & wild_string)
+void account_table::find(const std::string & wild_string)
 {
 	int_64 count=0;
 	for(int i=0; i<this->account_list.size(); i++)
@@ -231,7 +239,7 @@ void find(const std::string & wild_string)
 	return;
 }
 
-bool wildcmp(char *first, char * second)
+bool account_table::wildcmp(char *first, char * second)
 {
 	// If we reach at the end of both strings, we are done
     if (*first == '\0' && *second == '\0')
@@ -254,7 +262,7 @@ bool wildcmp(char *first, char * second)
     return false;
 }
 
-void search(const std::string & id)
+void account_table::search(const std::string & id)
 {
 	for(int i=0; i<this->transactions.size(); i++)
 	{
