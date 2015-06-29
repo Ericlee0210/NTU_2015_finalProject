@@ -2,7 +2,12 @@ CXX = g++
 CXXFLAGS = -O2 -std=c++11 -Wall
 target = system
 
-$(target): recommendation.cpp data.h
-	$(CXX) $(CXXFLAGS) recommendation.cpp -o $@
+$(target): data.cpp data.h system.cpp md5.cpp md5.h
+	$(CXX) $(CXXFLAGS) md5.cpp data.cpp system.cpp -o $@
 
-system: 
+run_test: system
+	./system < test.txt > testout.txt 
+run: system
+	./system
+clean:
+	rm system
