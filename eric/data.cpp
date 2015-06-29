@@ -253,7 +253,7 @@ void account_table::transfer(const std::string & id, const int_64 & a)
 		std::cout << std::endl;
 	}
 	else if(tmp < a)
-		std::cout << "fail, " << tmp << "dollars only in current account" << std::endl;
+		std::cout << "fail, " << tmp << " dollars only in current account" << std::endl;
 	else
 	{
 		tmp -= a;
@@ -378,14 +378,14 @@ void account_table::recommend(const std::string & str, str_vector & result, cons
 			// First step cut first and modify
 			if (str.length() > p_cnt)
 			{
-			  std::string temp_str = str.substr(0, str.length() - p_cnt); //cut length
+			  std::string temp_str = str.substr(0, (int)str.length() - p_cnt); //cut length
 
 				if (s_mod == 0) temp.push_back(temp_str); // Add string, which is only cut
 				else //Add string; there is modification
 			  	{
 			    	for (m_vector::iterator it = TABLE[s_mod-1].begin(); it != TABLE[s_mod-1].end(); ++it)
 			    	{
-			      		if (it->front() <= temp_str.length()) //Need to check, whether the modification target position is within string.
+			      		if (it->front() <= (int)temp_str.length()) //Need to check, whether the modification target position is within string.
 			      		{
 			        		change_char_at_pos(temp_str, *it);
 			        		std::copy (RESULT_BY_CHANGE_CHAR.begin(),RESULT_BY_CHANGE_CHAR.end(),back_inserter(temp));
@@ -399,7 +399,7 @@ void account_table::recommend(const std::string & str, str_vector & result, cons
 			str_vector pmt = permute(p_cnt);
 			if (pmt.size() != 0)
 			{
-				if (str.length() + p_cnt <= 100) // Length of ID should be less than 100
+				if ((int)str.length() + p_cnt <= 100) // Length of ID should be less than 100
 				{
 					if (s_mod == 0) // s_mod is 0
 						for (str_vector::iterator it = pmt.begin(); it != pmt.end(); ++it)
@@ -408,7 +408,7 @@ void account_table::recommend(const std::string & str, str_vector & result, cons
 					{
 						for (m_vector::iterator it = TABLE[s_mod-1].begin(); it != TABLE[s_mod-1].end(); ++it)
 						{
-							if (it->front() <= str.length())
+							if (it->front() <= (int)str.length())
 							{
 								change_char_at_pos(str, *it);
 
@@ -455,8 +455,8 @@ void account_table::recommend(const std::string & str, str_vector & result, cons
 
 int score(const std::string & str1, const std::string & str2)
 {
-  int str1_l = str1.length();
-  int str2_l = str2.length();
+  int str1_l = (int)str1.length();
+  int str2_l = (int)str2.length();
   int min = std::min(str1_l, str2_l);
   int delta = (str1_l-str2_l>0)?(str1_l-str2_l):(str2_l-str1_l);
   int temp = delta * (delta+1) / 2;
@@ -583,7 +583,7 @@ void change_char_at_pos(const std::string & str, const s_vector & N)
 
   while(pos != N.end()) // During iterations, when we confront pos change it from 0 to z.
   {
-    if (str.length() - *pos > idx) //Maintain character positions that vector N doesn't mention.
+    if ((int)str.length() - *pos > idx) //Maintain character positions that vector N doesn't mention.
     {
       for (str_vector::iterator it = RESULT_BY_CHANGE_CHAR.begin(); it != RESULT_BY_CHANGE_CHAR.end(); ++it)
         *it += str[idx];
@@ -604,7 +604,7 @@ void change_char_at_pos(const std::string & str, const s_vector & N)
     }
   }
 
-  while (idx < str.length()) // If while loop ends because we changed all, add left part of string.
+  while (idx < (int)str.length()) // If while loop ends because we changed all, add left part of string.
   {
     for (str_vector::iterator it = RESULT_BY_CHANGE_CHAR.begin(); it != RESULT_BY_CHANGE_CHAR.end(); ++it)
       *it += str[idx];

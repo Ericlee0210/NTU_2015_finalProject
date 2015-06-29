@@ -1,13 +1,13 @@
-CXX = g++
+CXX = g++-4.8
 CXXFLAGS = -O2 -std=c++11 -Wall
-target = system
+target = final_project
 
 $(target): data.cpp data.h system.cpp md5.cpp md5.h
 	$(CXX) $(CXXFLAGS) md5.cpp data.cpp system.cpp -o $@
 
-run_test: system
-	./system < test.txt > testout.txt 
-run: system
-	./system
+run_test: final_project
+	./final_project < test.txt > testout.txt 
+run: final_project
+	./final_project
 clean:
-	rm system
+	rm final_project
