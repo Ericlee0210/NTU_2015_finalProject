@@ -154,13 +154,38 @@ void account_table::merge(const std::string & id1, const std::string & cpassword
 	{
 		int_64 & tmp = this->account_list.at(output1.second)->balance;
 		tmp += this->account_list.at(output2.second)->balance;
+		this->account_list.at(output2.second)->balance = 0;
 
 		//change all the ID of transactions of id2 to id1
 		for(std::vector<int>::iterator it = this->account_list[output2.second]->t_index.begin(); it!=this->account_list[output2.second]->t_index.end(); ++it)
 		{
-			if(this->transactions[*it]->from == id2) this->transactions[*it]->from = id1;
-			if(this->transactions[*it]->to   == id2) this->transactions[*it]->to   = id1;
+			if(this->transactions[*it]->to == id1 && this->transactions[*it]->from == id2)
+			{
+				this->transactions[*it]->flag =1;
+				this->transactions[*it]->from = id1;
+			}
+			else if(this->transactions[*it]->from == id1 && this->transactions[*it]->to == id2)
+			{
+				this->transactions[*it]->flag =2;
+				this->transactions[*it]->to = id1;
+			}
+			else
+			{
+				if(this->transactions[*it]->from == id2)
+					this->transactions[*it]->from = id1;
+				if(this->transactions[*it]->to == id2)
+					this->transactions[*it]->to = id1;				
+			}
+
+			bool exist = bs(this->account_list[output1.second]->t_index, *it);
+			if(!exist)
+			{
+				this->account_list[output1.second]->t_index.push_back(*it);
+			}
 		}
+		std::sort(account_list[output1.second]->t_index.begin(), account_list[output1.second]->t_index.end());
+
+		delete this->account_list[output2.second];
 		this->account_list.erase(this->account_list.begin()+output2.second);
 		std::cout << "success, " << id1 << " has " << tmp << " dollars" << std::endl;
 	}
@@ -270,7 +295,7 @@ void account_table::transfer(const std::string & id, const int_64 & a)
 	}
 	//for(unsigned int aaa=0; aaa<this->transactions.size(); ++aaa)
 	//{
-	//	std::cout << "transacionts[" << aaa << "]" << std::endl;
+	//	std::cout << "transactions[" << aaa << "]" << std::endl;
 	//	printLog(this->transactions[aaa]);
 	//}
 	return;
@@ -333,20 +358,41 @@ void account_table::search(const std::string & id)
 		this->check(this->last_successful_login_id, output);
 		this->last_successful_login_id_index = output.second;
 	}
-	int count=0;
-	for(std::vector<int>::iterator i=this->account_list[last_successful_login_id_index]->t_index.begin(); i!=this->account_list[last_successful_login_id_index]->t_index.end(); i++)
+	int count=0; 
+	if(id == this->last_successful_login_id)
 	{
-		if( this->transactions[*i]->to == id)
+		for(std::vector<int>::iterator i=this->account_list[last_successful_login_id_index]->t_index.begin(); i!=this->account_list[last_successful_login_id_index]->t_index.end(); i++)
 		{
+			//printLog(this->transactions[*i]);
+			if(this->transactions[*i]->flag==0) continue;
+			if(this->transactions[*i]->flag==1)
+			{
+				std::cout << "From " << this->last_successful_login_id << " "<< this->transactions[*i]->amount << std::endl;
+				std::cout << "To " << this->last_successful_login_id << " "<< this->transactions[*i]->amount << std::endl;
+			}
+			else if(this->transactions[*i]->flag==2)
+			{
+				std::cout << "To " << this->last_successful_login_id << " "<< this->transactions[*i]->amount << std::endl;
+				std::cout << "From " << this->last_successful_login_id << " "<< this->transactions[*i]->amount << std::endl;				
+			}
 			count++;
-			std::cout << "To " << id << " "<< this->transactions[*i]->amount << std::endl;
+			
 		}
-		if( this->transactions[*i]->from == id)
+	}
+	else //(1)last id give some money to others, (2)accept some money from others
+	{
+		for(std::vector<int>::iterator i=this->account_list[last_successful_login_id_index]->t_index.begin(); i!=this->account_list[last_successful_login_id_index]->t_index.end(); i++)
 		{
+			//printLog(this->transactions[*i]);
+			if(this->transactions[*i]->flag!=0) continue;
+			if(this->transactions[*i]->to != id && this->transactions[*i]->from != id) continue;
 			count++;
-			std::cout << "From "   << id << " "<< this->transactions[*i]->amount << std::endl;
+			if(this->transactions[*i]->to == id) //(1)
+				std::cout << "To " << id << " "<< this->transactions[*i]->amount << std::endl;
+			else if(this->transactions[*i]->from == id)
+				std::cout << "From " << id << " "<< this->transactions[*i]->amount << std::endl;
 		}	
-	}	
+	}
 	if(count==0)
 		std::cout << "no record" << std::endl;	
 	return;
@@ -622,6 +668,29 @@ void swap(info* & a, info* & b)
 	return;
 }
 
+bool bs(const std::vector<int> & v, const int & target)
+{
+	int head =0;
+	int tail = v.size()-1;
+	int mid = (head+tail)/2;
+	while(head<=tail)
+	{
+		if( target > v[mid] )
+		{
+			head=mid+1;
+			mid = (head+tail)/2;
+		}
+		else if( target < v[mid] )
+		{
+			tail=mid-1;
+			mid = (head+tail)/2;
+		}
+		else
+			return true;
+	}
+	return false;
+}
+
 void printInfo(const info* info_content)
 {
 	std::cout << "id       : " << info_content->id        << std::endl;
@@ -632,6 +701,7 @@ void printInfo(const info* info_content)
 
 void printLog(const Log * log_content)
 {
+	std::cout << "           flgg: " << log_content->flag    << std::endl;
 	std::cout << "             to: " << log_content->to    << std::endl;
 	std::cout << "           from: " << log_content->from      << std::endl;
 	std::cout << "         amount: " << log_content->amount << std::endl; 

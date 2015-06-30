@@ -20,10 +20,11 @@ typedef unsigned long long int int_64; //define new type of int, let money won't
 class Log //every transactions
 {
 public:
+	int flag; //0: no orders, 1: from go first, 2: to go first
 	std::string from;
 	std::string to;
 	int_64 amount;
-	Log(std::string _from, std::string _to, int_64 _amount): from(_from), to(_to), amount(_amount){}
+	Log(std::string _from, std::string _to, int_64 _amount): from(_from), to(_to), amount(_amount){flag=0;}
 	Log();
 };
 
@@ -100,6 +101,7 @@ void get_pos_set(const int & n);
 str_vector permute(const int & n);
 void change_char_at_pos(const std::string & str, const s_vector & N);
 int score(const std::string & str1, const std::string & str2);
+bool bs(const std::vector<int> & v, const int & target);
 /*************************************************************************************/
 
 /**************  Debugger  ****************/
