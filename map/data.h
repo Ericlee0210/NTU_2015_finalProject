@@ -40,7 +40,7 @@ public:
 	std::vector<int> t_index; //for storing related transactions index
 	std::string cpassword;
 	int_u balance;
-	info(std::string _cpassword, int_u _balance): cpassword(_cpassword), balance(_balance){ t_index.reserve(100); }
+	info(std::string _cpassword, int_u _balance): cpassword(_cpassword), balance(_balance){ t_index.reserve(20000); }
 };
 class account_table
 {
@@ -48,7 +48,7 @@ public:
 	std::map<std::string, info*> account_list;
 	std::vector<Log*> transactions;
 	std::string last_successful_login_id;
-	account_table(){transactions.reserve(20000);}
+	account_table(){transactions.reserve(400000);}
 
 	void login(const std::string & id, const std::string & cpassword);
 	void create(const std::string & id, const std::string & cpassword);
