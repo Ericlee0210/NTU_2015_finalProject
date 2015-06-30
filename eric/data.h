@@ -15,7 +15,7 @@ typedef unsigned long long int int_64; //define new type of int, let money won't
   typedef std::vector<std::string>                     str_vector;  
  /*********************************************************************/
 
-#define account_size 10000 // to define vector size in account_table
+#define account_size 400000 // to define vector size in account_table
 
 class Log //every transactions
 {
@@ -35,8 +35,8 @@ public:
 	std::string id;
 	std::string cpassword;
 	int_64 balance;
-	info(std::string _id, std::string _cpassword, int_64 _balance):id(_id), cpassword(_cpassword), balance(_balance){ t_index.reserve(100); }
-	info(){ t_index.reserve(100); }	
+	info(std::string _id, std::string _cpassword, int_64 _balance):id(_id), cpassword(_cpassword), balance(_balance){ t_index.reserve(2000); }
+	info(){ t_index.reserve(2000); }	
 };
 
 class account_table //bank system
