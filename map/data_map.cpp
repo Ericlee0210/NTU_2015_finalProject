@@ -1,17 +1,17 @@
 #include <cstdio>
-#include <unordered_map>
+#include <map>
 #include <vector>
 #include <string>
 #include <string.h>
 #include <algorithm>
-#include "data.h"
+#include "data_map.h"
 
 b_vector TABLE; 
 str_vector RESULT_BY_CHANGE_CHAR;
 
 void account_table::login(const std::string & id, const std::string & cpassword)
 {
-	iter_m i = this->account_list.find(id);  //could be collision
+	iter_m i = this->account_list.find(id);
 	if( i== this->account_list.end() ) //not found
 		printf("ID %s not found\n", id.c_str() );
 	else if( i->second->cpassword != cpassword)
@@ -60,7 +60,7 @@ void account_table::del(const std::string & id, const std::string & cpassword)
 		else //delete account
 		{
 			delete i->second;
-			this->account_list.erase(i); //could be O(N)
+			this->account_list.erase(i);
 			printf("success\n");
 		}	
 	}

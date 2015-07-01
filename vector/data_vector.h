@@ -3,8 +3,8 @@
 #include <vector>
 #include <utility>
 
-#ifndef DATA_H
-#define DATA_H
+#ifndef DATA_VECTOR_H
+#define DATA_VECTOR_H
 
 typedef unsigned long long int int_64; //define new type of int, let money won't overflow
 

@@ -3,8 +3,8 @@
 #include <string.h>
 #include <unordered_map>
 
-#ifndef DATA_H
-#define DATA_H
+#ifndef DATA_UN_H
+#define DATA_UN_H
 
 typedef unsigned int int_u;
 

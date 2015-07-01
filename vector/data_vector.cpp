@@ -3,7 +3,7 @@
 #include <string>
 #include <string.h>
 #include <utility>
-#include "data.h"
+#include "data_vector.h"
 
 /* Save all list of output for each score input
    TABLE[0] saves all score1 permutation

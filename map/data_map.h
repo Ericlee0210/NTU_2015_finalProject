@@ -3,8 +3,8 @@
 #include <string.h>
 #include <map>
 
-#ifndef DATA_H
-#define DATA_H
+#ifndef DATA_VECTOR_H
+#define DATA_VECTOR_H
 
 typedef unsigned int int_u;
 
