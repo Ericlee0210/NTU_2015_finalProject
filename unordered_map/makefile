@@ -1,4 +1,4 @@
-CXX = g++
+CXX = g++-4.8
 CXXFLAGS = -O2 -std=c++11 -Wall
 TARGET1 = final_project_vecotr 
 TARGET2 = final_project_map

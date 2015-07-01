@@ -1,4 +1,4 @@
-Final Project of Eric, Ericka and Eui-jin.
+Final Project of 李奕儒(Eric), Ericka and Eui-jin.
 
 1. Type “make run1” to execute data structure 1 using vector.
    Type “make run2” to execute data structure 2 using map.
